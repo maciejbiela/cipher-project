@@ -5,7 +5,7 @@ import javax.swing.text.AbstractDocument;
 import javax.swing.text.DocumentFilter;
 import java.awt.*;
 
-class CipherFiller extends MainLayoutPanel {
+class CipherFiller extends Grid {
 
     private int boardSize;
     private JTextField[][] matrix;
@@ -13,39 +13,26 @@ class CipherFiller extends MainLayoutPanel {
 
     CipherFiller(int boardSize) {
         this.boardSize = boardSize;
-        setLayout(boardSize);
+        setLayout();
     }
 
-    CipherFiller(String cipher) {
-        final String[] lines = cipher.split("\n");
-        this.boardSize = Integer.valueOf(lines[0]);
-        setLayout(this.boardSize);
-        for (int row = 0; row < this.boardSize; row++) {
-            final String[] characters = lines[row + 1].split(" ");
-            for (int column = 0; column < this.boardSize; column++) {
-                this.matrix[row][column].setText(characters[column]);
-            }
-        }
-    }
-
-    public void setLayout(int n) {
-        this.boardSize = n;
-        this.matrix = new JTextField[n][n];
+    public void setLayout() {
+        this.matrix = new JTextField[this.boardSize][this.boardSize];
         removeAll();
-        setLayout(new GridLayout(n, n));
-        for (int row = 0; row < n; row++) {
-            for (int column = 0; column < n; column++) {
-                initializeField(row, column, "");
+        setLayout(new GridLayout(this.boardSize, this.boardSize));
+        for (int row = 0; row < this.boardSize; row++) {
+            for (int column = 0; column < this.boardSize; column++) {
+                initializeField(row, column);
             }
         }
         revalidate();
     }
 
-    private void initializeField(int row, int column, String character) {
-        matrix[row][column] = new JTextField(character);
+    private void initializeField(int row, int column) {
+        matrix[row][column] = new JTextField("");
         JTextField textField = matrix[row][column];
         textField.setFont(new Font("SansSerif", Font.BOLD, 30));
-        textField.setEnabled(false);
+        textField.setEditable(false);
         textField.setHorizontalAlignment(SwingConstants.CENTER);
         DocumentFilter oneCharacterFilter = new LengthDocumentFilter(1);
         ((AbstractDocument) textField.getDocument()).setDocumentFilter(oneCharacterFilter);
@@ -55,10 +42,10 @@ class CipherFiller extends MainLayoutPanel {
     @Override
     void setFieldStatusMatrix(boolean[][] matrix) {
         this.fieldStatusMatrix = matrix;
-        for (int i = 0; i < boardSize; i++) {
-            for (int j = 0; j < boardSize; j++) {
-                final JTextField textField = this.matrix[i][j];
-                textField.setEnabled(this.fieldStatusMatrix[i][j]);
+        for (int row = 0; row < boardSize; row++) {
+            for (int column = 0; column < boardSize; column++) {
+                final JTextField textField = this.matrix[row][column];
+                textField.setEditable(this.fieldStatusMatrix[row][column]);
                 if (textField.isEnabled()) {
                     textField.setBackground(Color.PINK);
                     textField.setForeground(Color.RED);
@@ -68,9 +55,13 @@ class CipherFiller extends MainLayoutPanel {
                 }
             }
         }
-        if (boardSize % 2 != 0) {
+        if (isSizeOdd()) {
             this.matrix[boardSize / 2][boardSize / 2].setBackground(Color.GRAY);
         }
+    }
+
+    private boolean isSizeOdd() {
+        return boardSize % 2 != 0;
     }
 
     @Override
@@ -93,7 +84,7 @@ class CipherFiller extends MainLayoutPanel {
         for (int row = 0; row < boardSize; row++) {
             for (int column = 0; column < boardSize; column++) {
                 if (matrix[row][column].getText().equals("")) {
-                    if (boardSize % 2 != 0) {
+                    if (isSizeOdd()) {
                         if (row != boardSize / 2 && column != boardSize / 2) {
                             return false;
                         }

@@ -8,7 +8,7 @@ import static project.MenuState.CIPHER_FILLER;
 
 class RootFrame extends JFrame {
 
-    private MainLayoutPanel mainLayoutPanel;
+    private Grid grid;
     private Menu menu;
 
     RootFrame() {
@@ -17,15 +17,15 @@ class RootFrame extends JFrame {
         pack();
     }
 
-    MainLayoutPanel getMainLayoutPanel() {
-        return mainLayoutPanel;
+    Grid getGrid() {
+        return grid;
     }
 
-    void setInnerLayout(MainLayoutPanel panel, MenuState menuState) {
-        if (mainLayoutPanel != null) {
-            remove(mainLayoutPanel);
+    void setInnerLayout(Grid panel, MenuState menuState) {
+        if (grid != null) {
+            remove(grid);
         }
-        mainLayoutPanel = panel;
+        grid = panel;
         if (!(menuState == CIPHER_FILLER)) {
             setMenuPanel(menuState);
         }
@@ -37,7 +37,7 @@ class RootFrame extends JFrame {
         if (menu != null) {
             remove(menu);
         }
-        menu = new Menu(this, mainLayoutPanel.getBoardSize(), menuState);
+        menu = new Menu(this, grid.getBoardSize(), menuState);
         add(menu, BorderLayout.NORTH);
     }
 }

@@ -109,7 +109,7 @@ class Menu extends JPanel {
                 if (Files.exists(path)) {
                     try {
                         final String cipher = new String(Files.readAllBytes(path));
-                        frame.setInnerLayout(new CipherFiller(cipher), OPENED_FROM_FILE);
+                        frame.setInnerLayout(new Chooser(cipher), OPENED_FROM_FILE);
                         buttonStateMap.put(doneButton, INVISIBLE);
                         buttonStateMap.put(rotateRightButton, INVISIBLE);
                         buttonStateMap.put(saveButton, INVISIBLE);
@@ -124,15 +124,15 @@ class Menu extends JPanel {
 
     private void setUpDoneButton() {
         doneButton.addActionListener(e -> {
-            final MainLayoutPanel mainLayoutPanel = frame.getMainLayoutPanel();
-            if (!mainLayoutPanel.isFull()) {
+            final Grid grid = frame.getGrid();
+            if (!grid.isFull()) {
                 return;
             }
-            if (mainLayoutPanel instanceof Chooser) {
-                boolean[][] matrix = mainLayoutPanel.getFieldStatusMatrix();
-                int n = frame.getMainLayoutPanel().getBoardSize();
+            if (grid instanceof Chooser) {
+                boolean[][] matrix = grid.getFieldStatusMatrix();
+                int n = frame.getGrid().getBoardSize();
                 frame.setInnerLayout(new CipherFiller(n), CIPHER_FILLER);
-                frame.getMainLayoutPanel().setFieldStatusMatrix(matrix);
+                frame.getGrid().setFieldStatusMatrix(matrix);
                 buttonStateMap.put(rotateRightButton, ENABLED);
                 setButtonsState();
             } else {
@@ -144,14 +144,14 @@ class Menu extends JPanel {
 
     private void setUpRotateRightButton() {
         rotateRightButton.addActionListener(e -> {
-            final CipherFiller cipherFiller = (CipherFiller) frame.getMainLayoutPanel();
+            final CipherFiller cipherFiller = (CipherFiller) frame.getGrid();
             cipherFiller.rotate();
         });
     }
 
     private void setUpSaveButton() {
         saveButton.addActionListener(e -> {
-            final CipherFiller cipherFiller = (CipherFiller) frame.getMainLayoutPanel();
+            final CipherFiller cipherFiller = (CipherFiller) frame.getGrid();
             if (cipherFiller.isFull()) {
                 final String cipher = cipherFiller.getCipher();
                 JFileChooser c = new JFileChooser();

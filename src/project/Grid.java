@@ -4,8 +4,8 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.swing.*;
 
-abstract class MainLayoutPanel extends JPanel{
-    abstract void setLayout(int n);
+abstract class Grid extends JPanel{
+    abstract void setLayout();
 
     abstract int getBoardSize();
 

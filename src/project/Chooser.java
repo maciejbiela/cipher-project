@@ -7,24 +7,36 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-class Chooser extends MainLayoutPanel {
+class Chooser extends Grid {
 
-    private int n;
-    private FieldStatusMatrix model;
+    private int boardSize;
     private JTextField[][] matrix;
+    private FieldStatusMatrix model;
 
-    Chooser(int n) {
-        setLayout(n);
+    Chooser(int boardSize) {
+        this.boardSize = boardSize;
+        setLayout();
     }
 
-    public void setLayout(int n) {
-        this.n = n;
-        this.model = new FieldStatusMatrix(n);
-        this.matrix = new JTextField[n][n];
+    Chooser(String cipher) {
+        final String[] lines = cipher.split("\n");
+        this.boardSize = Integer.valueOf(lines[0]);
+        setLayout();
+        for (int row = 0; row < this.boardSize; row++) {
+            final String[] characters = lines[row + 1].split(" ");
+            for (int column = 0; column < this.boardSize; column++) {
+                this.matrix[row][column].setText(characters[column]);
+            }
+        }
+    }
+
+    public void setLayout() {
+        this.model = new FieldStatusMatrix(this.boardSize);
+        this.matrix = new JTextField[this.boardSize][this.boardSize];
         removeAll();
-        setLayout(new GridLayout(n, n));
-        for (int row = 0; row < n; row++) {
-            for (int column = 0; column < n; column++) {
+        setLayout(new GridLayout(this.boardSize, this.boardSize));
+        for (int row = 0; row < this.boardSize; row++) {
+            for (int column = 0; column < this.boardSize; column++) {
                 matrix[row][column] = new JTextField();
                 JTextField textField = matrix[row][column];
                 textField.setFont(new Font("SansSerif", Font.BOLD, 30));
@@ -37,26 +49,41 @@ class Chooser extends MainLayoutPanel {
                 textField.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        if (mark(i, j)) {
-                            if (isMarked(i, j)) {
+                        if (isSizeOdd()) {
+                            if (i == boardSize / 2 && j == boardSize / 2) {
+                                return;
+                            }
+                        }
+                        if (!mark(i, j)) {
+                            return;
+                        }
+                        if (isMarked(i, j)) {
+                            SwingUtilities.invokeLater(() -> {
                                 textField.setBackground(Color.PINK);
                                 textField.setForeground(Color.RED);
                                 changeRotations(i, j, true);
-                            } else {
-                                textField.setBackground(Color.WHITE);
-                                textField.setForeground(Color.BLACK);
-                                changeRotations(i, j, false);
-                            }
+                            });
+                        } else {
+                            textField.setBackground(Color.WHITE);
+                            textField.setForeground(Color.BLACK);
+                            changeRotations(i, j, false);
                         }
                     }
                 });
                 add(textField);
             }
         }
-        if (n % 2 != 0) {
-            matrix[n / 2][n / 2].setEnabled(false);
+        if (isSizeOdd()) {
+            final JTextField textField = matrix[this.boardSize / 2][this.boardSize / 2];
+            textField.setEditable(false);
+            textField.setBackground(Color.GRAY);
+            textField.setForeground(Color.GRAY);
         }
         revalidate();
+    }
+
+    private boolean isSizeOdd() {
+        return this.boardSize % 2 != 0;
     }
 
     private boolean isMarked(int i, int j) {
@@ -66,15 +93,15 @@ class Chooser extends MainLayoutPanel {
     private void changeRotations(int row, int column, boolean select) {
         for (int i = 0; i < 3; i++) {
             int tmp = row;
-            row = n - 1 - column;
+            row = boardSize - 1 - column;
             column = tmp;
             final JTextField textField = matrix[row][column];
             if (select) {
-                textField.setEnabled(false);
+                textField.setEditable(false);
                 textField.setBackground(Color.GRAY);
                 textField.setForeground(Color.BLACK);
             } else {
-                textField.setEnabled(true);
+                textField.setEditable(true);
                 textField.setBackground(Color.WHITE);
                 textField.setForeground(Color.BLACK);
             }
@@ -86,7 +113,7 @@ class Chooser extends MainLayoutPanel {
     }
 
     public int getBoardSize() {
-        return n;
+        return boardSize;
     }
 
     boolean[][] getFieldStatusMatrix() {
