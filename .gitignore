@@ -1,3 +1,4 @@
+src/META-INF/MANIFEST.MF
 .idea/*
 out/*
 *.iml
