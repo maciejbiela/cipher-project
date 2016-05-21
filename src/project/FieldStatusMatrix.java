@@ -31,6 +31,10 @@ class FieldStatusMatrix {
         return markMatrix;
     }
 
+    void setMarkMatrix(boolean[][] markMatrix) {
+        this.markMatrix = markMatrix;
+    }
+
     boolean isFull() {
         return marked == maxMarked;
     }

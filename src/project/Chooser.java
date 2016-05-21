@@ -11,7 +11,7 @@ class Chooser extends Grid {
 
     private int boardSize;
     private JTextField[][] matrix;
-    private FieldStatusMatrix model;
+    private FieldStatusMatrix fieldStatusMatrix;
 
     Chooser(int boardSize) {
         this.boardSize = boardSize;
@@ -31,7 +31,7 @@ class Chooser extends Grid {
     }
 
     public void setLayout() {
-        this.model = new FieldStatusMatrix(this.boardSize);
+        this.fieldStatusMatrix = new FieldStatusMatrix(this.boardSize);
         this.matrix = new JTextField[this.boardSize][this.boardSize];
         removeAll();
         setLayout(new GridLayout(this.boardSize, this.boardSize));
@@ -87,7 +87,7 @@ class Chooser extends Grid {
     }
 
     private boolean isMarked(int i, int j) {
-        return model.isMarked(i, j);
+        return fieldStatusMatrix.isMarked(i, j);
     }
 
     private void changeRotations(int row, int column, boolean select) {
@@ -109,7 +109,7 @@ class Chooser extends Grid {
     }
 
     private boolean mark(int row, int column) {
-        return this.model.mark(row, column);
+        return this.fieldStatusMatrix.mark(row, column);
     }
 
     public int getBoardSize() {
@@ -117,11 +117,48 @@ class Chooser extends Grid {
     }
 
     boolean[][] getFieldStatusMatrix() {
-        return model.getMarkMatrix();
+        return fieldStatusMatrix.getMarkMatrix();
     }
 
     @Override
     public boolean isFull() {
-        return model.isFull();
+        return fieldStatusMatrix.isFull();
+    }
+
+    @Override
+    void setFieldStatusMatrix(boolean[][] matrix) {
+        this.fieldStatusMatrix.setMarkMatrix(matrix);
+        highlightFields();
+    }
+
+    @Override
+    void highlightFields() {
+        for (int row = 0; row < boardSize; row++) {
+            for (int column = 0; column < boardSize; column++) {
+                final JTextField textField = this.matrix[row][column];
+                textField.setEditable(isMarked(row, column));
+                if (textField.isEditable()) {
+                    textField.setBackground(Color.PINK);
+                    textField.setForeground(Color.RED);
+                } else {
+                    textField.setBackground(Color.WHITE);
+                    textField.setForeground(Color.BLACK);
+                }
+            }
+        }
+        if (isSizeOdd()) {
+            this.matrix[boardSize / 2][boardSize / 2].setBackground(Color.GRAY);
+        }
+    }
+
+    @Override
+    void rotate() {
+        boolean[][] matrixAfterRotation = new boolean[boardSize][boardSize];
+        for (int i = 0; i < boardSize; i++) {
+            for (int j = 0; j < boardSize; j++) {
+                matrixAfterRotation[i][j] = isMarked(boardSize - 1 - j, i);
+            }
+        }
+        setFieldStatusMatrix(matrixAfterRotation);
     }
 }

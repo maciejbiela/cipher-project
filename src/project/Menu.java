@@ -31,31 +31,24 @@ class Menu extends JPanel {
     Menu(RootFrame frame, int size, MenuState menuState) {
         this.frame = frame;
         this.size = size;
-        setUpElements();
+        setUpElements(menuState);
         addElements();
-        initializeButtonsState(menuState);
+        initializeButtonsState();
     }
 
-    private void setUpElements() {
+    private void setUpElements(MenuState menuState) {
         setUpOpenButton();
         setUpBoardSizeTextField();
-        setUpDoneButton();
+        setUpDoneButton(menuState);
         setUpRotateRightButton();
         setUpSaveButton();
     }
 
-    private void initializeButtonsState(MenuState menuState) {
-        if (menuState == CHOOSER) {
-            buttonStateMap.put(openButton, ENABLED);
-            buttonStateMap.put(doneButton, ENABLED);
-            buttonStateMap.put(rotateRightButton, INVISIBLE);
-            buttonStateMap.put(saveButton, INVISIBLE);
-        } else if (menuState == OPENED_FROM_FILE) {
-            buttonStateMap.put(openButton, ENABLED);
-            buttonStateMap.put(doneButton, INVISIBLE);
-            buttonStateMap.put(rotateRightButton, INVISIBLE);
-            buttonStateMap.put(saveButton, INVISIBLE);
-        }
+    private void initializeButtonsState() {
+        buttonStateMap.put(openButton, ENABLED);
+        buttonStateMap.put(doneButton, ENABLED);
+        buttonStateMap.put(rotateRightButton, INVISIBLE);
+        buttonStateMap.put(saveButton, INVISIBLE);
         setButtonsState();
     }
 
@@ -122,29 +115,37 @@ class Menu extends JPanel {
         });
     }
 
-    private void setUpDoneButton() {
+    private void setUpDoneButton(MenuState menuState) {
         doneButton.addActionListener(e -> {
             final Grid grid = frame.getGrid();
             if (!grid.isFull()) {
                 return;
             }
-            if (grid instanceof Chooser) {
-                boolean[][] matrix = grid.getFieldStatusMatrix();
-                int n = frame.getGrid().getBoardSize();
-                frame.setInnerLayout(new CipherFiller(n), CIPHER_FILLER);
-                frame.getGrid().setFieldStatusMatrix(matrix);
-                buttonStateMap.put(rotateRightButton, ENABLED);
-                setButtonsState();
-            } else {
-                buttonStateMap.put(saveButton, ENABLED);
-                setButtonsState();
+            switch (menuState) {
+                case CHOOSER:
+                    boolean[][] matrix = grid.getFieldStatusMatrix();
+                    int n = frame.getGrid().getBoardSize();
+                    frame.setInnerLayout(new CipherFiller(n), CIPHER_FILLER);
+                    frame.getGrid().setFieldStatusMatrix(matrix);
+                    buttonStateMap.put(rotateRightButton, ENABLED);
+                    setButtonsState();
+                    break;
+                case OPENED_FROM_FILE:
+                    buttonStateMap.put(rotateRightButton, ENABLED);
+                    setButtonsState();
+                    frame.getGrid().highlightFields();
+                    break;
+                case CIPHER_FILLER:
+                    buttonStateMap.put(saveButton, ENABLED);
+                    setButtonsState();
+                    break;
             }
         });
     }
 
     private void setUpRotateRightButton() {
         rotateRightButton.addActionListener(e -> {
-            final CipherFiller cipherFiller = (CipherFiller) frame.getGrid();
+            final Grid cipherFiller = frame.getGrid();
             cipherFiller.rotate();
         });
     }

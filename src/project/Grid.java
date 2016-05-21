@@ -11,6 +11,10 @@ abstract class Grid extends JPanel{
 
     abstract boolean isFull();
 
+    abstract void rotate();
+
+    abstract void highlightFields();
+
     boolean[][] getFieldStatusMatrix() {
         throw new NotImplementedException();
     }

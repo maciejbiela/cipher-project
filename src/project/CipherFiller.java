@@ -42,11 +42,16 @@ class CipherFiller extends Grid {
     @Override
     void setFieldStatusMatrix(boolean[][] matrix) {
         this.fieldStatusMatrix = matrix;
+        highlightFields();
+    }
+
+    @Override
+    void highlightFields() {
         for (int row = 0; row < boardSize; row++) {
             for (int column = 0; column < boardSize; column++) {
                 final JTextField textField = this.matrix[row][column];
                 textField.setEditable(this.fieldStatusMatrix[row][column]);
-                if (textField.isEnabled()) {
+                if (textField.isEditable()) {
                     textField.setBackground(Color.PINK);
                     textField.setForeground(Color.RED);
                 } else {
@@ -69,6 +74,7 @@ class CipherFiller extends Grid {
         return boardSize;
     }
 
+    @Override
     void rotate() {
         boolean[][] matrixAfterRotation = new boolean[boardSize][boardSize];
         for (int i = 0; i < boardSize; i++) {
