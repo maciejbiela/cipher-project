@@ -34,4 +34,8 @@ class FieldStatusMatrix {
     boolean isFull() {
         return marked == maxMarked;
     }
+
+    boolean isMarked(int i, int j) {
+        return markMatrix[i][j];
+    }
 }

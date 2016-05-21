@@ -1,13 +1,17 @@
 package project;
 
 import javax.swing.*;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.DocumentFilter;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 class Chooser extends MainLayoutPanel {
 
     private int n;
     private FieldStatusMatrix model;
-    private JCheckBox[][] matrix;
+    private JTextField[][] matrix;
 
     Chooser(int n) {
         setLayout(n);
@@ -16,25 +20,37 @@ class Chooser extends MainLayoutPanel {
     public void setLayout(int n) {
         this.n = n;
         this.model = new FieldStatusMatrix(n);
-        this.matrix = new JCheckBox[n][n];
+        this.matrix = new JTextField[n][n];
         removeAll();
         setLayout(new GridLayout(n, n));
         for (int row = 0; row < n; row++) {
             for (int column = 0; column < n; column++) {
-                Icon icon = new CheckBoxIcon();
-                matrix[row][column] = new JCheckBox(icon);
-                JCheckBox checkBox = matrix[row][column];
-                checkBox.setEnabled(true);
+                matrix[row][column] = new JTextField();
+                JTextField textField = matrix[row][column];
+                textField.setFont(new Font("SansSerif", Font.BOLD, 30));
+                textField.setHorizontalAlignment(SwingConstants.CENTER);
+                DocumentFilter oneCharacterFilter = new LengthDocumentFilter(1);
+                ((AbstractDocument) textField.getDocument()).setDocumentFilter(oneCharacterFilter);
+                textField.setEnabled(true);
                 final int i = row;
                 final int j = column;
-                checkBox.addActionListener(e -> {
-                    if (!mark(i, j)) {
-                        checkBox.setSelected(!checkBox.isSelected());
-                    } else {
-                        changeRotations(i, j, !checkBox.isSelected());
+                textField.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        if (mark(i, j)) {
+                            if (isMarked(i, j)) {
+                                textField.setBackground(Color.PINK);
+                                textField.setForeground(Color.RED);
+                                changeRotations(i, j, true);
+                            } else {
+                                textField.setBackground(Color.WHITE);
+                                textField.setForeground(Color.BLACK);
+                                changeRotations(i, j, false);
+                            }
+                        }
                     }
                 });
-                add(checkBox);
+                add(textField);
             }
         }
         if (n % 2 != 0) {
@@ -43,12 +59,25 @@ class Chooser extends MainLayoutPanel {
         revalidate();
     }
 
+    private boolean isMarked(int i, int j) {
+        return model.isMarked(i, j);
+    }
+
     private void changeRotations(int row, int column, boolean select) {
         for (int i = 0; i < 3; i++) {
             int tmp = row;
             row = n - 1 - column;
             column = tmp;
-            matrix[row][column].setEnabled(select);
+            final JTextField textField = matrix[row][column];
+            if (select) {
+                textField.setEnabled(false);
+                textField.setBackground(Color.GRAY);
+                textField.setForeground(Color.BLACK);
+            } else {
+                textField.setEnabled(true);
+                textField.setBackground(Color.WHITE);
+                textField.setForeground(Color.BLACK);
+            }
         }
     }
 
