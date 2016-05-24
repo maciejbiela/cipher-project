@@ -1,4 +1,4 @@
-package project;
+package io.github.maciejbiela;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;

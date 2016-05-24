@@ -1,4 +1,4 @@
-package project;
+package io.github.maciejbiela;
 
 class FieldStatusMatrix {
 

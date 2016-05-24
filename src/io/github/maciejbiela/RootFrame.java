@@ -1,19 +1,16 @@
-package project;
+package io.github.maciejbiela;
 
 import javax.swing.*;
 import java.awt.*;
 
-import static project.MenuState.CHOOSER;
-import static project.MenuState.CIPHER_FILLER;
-
 class RootFrame extends JFrame {
 
     private Grid grid;
-    private Menu menu;
+    private io.github.maciejbiela.Menu menu;
 
     RootFrame() {
         setLayout(new BorderLayout());
-        setInnerLayout(new Chooser(4), CHOOSER);
+        setInnerLayout(new Chooser(4), MenuState.CHOOSER);
         pack();
     }
 
@@ -26,7 +23,7 @@ class RootFrame extends JFrame {
             remove(grid);
         }
         grid = panel;
-        if (!(menuState == CIPHER_FILLER)) {
+        if (!(menuState == MenuState.CIPHER_FILLER)) {
             setMenuPanel(menuState);
         }
         add(panel, BorderLayout.CENTER);
@@ -37,7 +34,7 @@ class RootFrame extends JFrame {
         if (menu != null) {
             remove(menu);
         }
-        menu = new Menu(this, grid.getBoardSize(), menuState);
+        menu = new io.github.maciejbiela.Menu(this, grid.getBoardSize(), menuState);
         add(menu, BorderLayout.NORTH);
     }
 }

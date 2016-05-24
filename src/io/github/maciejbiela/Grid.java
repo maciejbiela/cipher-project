@@ -1,4 +1,4 @@
-package project;
+package io.github.maciejbiela;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 

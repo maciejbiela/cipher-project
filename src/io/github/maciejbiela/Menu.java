@@ -1,4 +1,4 @@
-package project;
+package io.github.maciejbiela;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -9,12 +9,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static project.ButtonState.ENABLED;
-import static project.ButtonState.INVISIBLE;
-import static project.MenuState.CHOOSER;
-import static project.MenuState.CIPHER_FILLER;
-import static project.MenuState.OPENED_FROM_FILE;
 
 class Menu extends JPanel {
 
@@ -45,10 +39,10 @@ class Menu extends JPanel {
     }
 
     private void initializeButtonsState() {
-        buttonStateMap.put(openButton, ENABLED);
-        buttonStateMap.put(doneButton, ENABLED);
-        buttonStateMap.put(rotateRightButton, INVISIBLE);
-        buttonStateMap.put(saveButton, INVISIBLE);
+        buttonStateMap.put(openButton, ButtonState.ENABLED);
+        buttonStateMap.put(doneButton, ButtonState.ENABLED);
+        buttonStateMap.put(rotateRightButton, ButtonState.INVISIBLE);
+        buttonStateMap.put(saveButton, ButtonState.INVISIBLE);
         setButtonsState();
     }
 
@@ -64,20 +58,22 @@ class Menu extends JPanel {
         List<JButton> buttons = Arrays.asList(openButton, doneButton, rotateRightButton, saveButton);
         for (JButton button : buttons) {
             ButtonState state = buttonStateMap.get(button);
-            switch (state) {
-                case ENABLED:
-                    button.setVisible(true);
-                    button.setEnabled(true);
-                    break;
-                case DISABLED:
-                    button.setVisible(true);
-                    button.setEnabled(false);
-                    break;
-                case INVISIBLE:
-                    button.setVisible(false);
-                    button.setEnabled(false);
-                    break;
-            }
+            SwingUtilities.invokeLater(() -> {
+                switch (state) {
+                    case ENABLED:
+                        button.setVisible(true);
+                        button.setEnabled(true);
+                        break;
+                    case DISABLED:
+                        button.setVisible(true);
+                        button.setEnabled(false);
+                        break;
+                    case INVISIBLE:
+                        button.setVisible(false);
+                        button.setEnabled(false);
+                        break;
+                }
+            });
         }
     }
 
@@ -87,7 +83,7 @@ class Menu extends JPanel {
         boardSizeTextField.addActionListener(e -> {
             String text = boardSizeTextField.getText();
             int n = Integer.parseInt(text);
-            frame.setInnerLayout(new Chooser(n), CHOOSER);
+            frame.setInnerLayout(new Chooser(n), MenuState.CHOOSER);
         });
         boardSizeTextField.setHorizontalAlignment(SwingConstants.CENTER);
     }
@@ -102,10 +98,10 @@ class Menu extends JPanel {
                 if (Files.exists(path)) {
                     try {
                         final String cipher = new String(Files.readAllBytes(path));
-                        frame.setInnerLayout(new Chooser(cipher), OPENED_FROM_FILE);
-                        buttonStateMap.put(doneButton, INVISIBLE);
-                        buttonStateMap.put(rotateRightButton, INVISIBLE);
-                        buttonStateMap.put(saveButton, INVISIBLE);
+                        frame.setInnerLayout(new Chooser(cipher), MenuState.OPENED_FROM_FILE);
+                        buttonStateMap.put(doneButton, ButtonState.INVISIBLE);
+                        buttonStateMap.put(rotateRightButton, ButtonState.INVISIBLE);
+                        buttonStateMap.put(saveButton, ButtonState.INVISIBLE);
                         setButtonsState();
                     } catch (IOException e1) {
                         e1.printStackTrace();
@@ -125,18 +121,18 @@ class Menu extends JPanel {
                 case CHOOSER:
                     boolean[][] matrix = grid.getFieldStatusMatrix();
                     int n = frame.getGrid().getBoardSize();
-                    frame.setInnerLayout(new CipherFiller(n), CIPHER_FILLER);
+                    frame.setInnerLayout(new CipherFiller(n), MenuState.CIPHER_FILLER);
                     frame.getGrid().setFieldStatusMatrix(matrix);
-                    buttonStateMap.put(rotateRightButton, ENABLED);
+                    buttonStateMap.put(rotateRightButton, ButtonState.ENABLED);
                     setButtonsState();
                     break;
                 case OPENED_FROM_FILE:
-                    buttonStateMap.put(rotateRightButton, ENABLED);
+                    buttonStateMap.put(rotateRightButton, ButtonState.ENABLED);
                     setButtonsState();
                     frame.getGrid().highlightFields();
                     break;
                 case CIPHER_FILLER:
-                    buttonStateMap.put(saveButton, ENABLED);
+                    buttonStateMap.put(saveButton, ButtonState.ENABLED);
                     setButtonsState();
                     break;
             }

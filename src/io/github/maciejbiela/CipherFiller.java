@@ -1,4 +1,4 @@
-package project;
+package io.github.maciejbiela;
 
 import javax.swing.*;
 import javax.swing.text.AbstractDocument;
@@ -50,18 +50,22 @@ class CipherFiller extends Grid {
         for (int row = 0; row < boardSize; row++) {
             for (int column = 0; column < boardSize; column++) {
                 final JTextField textField = this.matrix[row][column];
-                textField.setEditable(this.fieldStatusMatrix[row][column]);
-                if (textField.isEditable()) {
-                    textField.setBackground(Color.PINK);
-                    textField.setForeground(Color.RED);
-                } else {
-                    textField.setBackground(Color.WHITE);
-                    textField.setForeground(Color.BLACK);
-                }
+                final int i = row;
+                final int j = column;
+                SwingUtilities.invokeLater(() -> {
+                    textField.setEditable(this.fieldStatusMatrix[i][j]);
+                    if (textField.isEditable()) {
+                        textField.setBackground(Color.PINK);
+                        textField.setForeground(Color.RED);
+                    } else {
+                        textField.setBackground(Color.WHITE);
+                        textField.setForeground(Color.BLACK);
+                    }
+                });
             }
         }
         if (isSizeOdd()) {
-            this.matrix[boardSize / 2][boardSize / 2].setBackground(Color.GRAY);
+            SwingUtilities.invokeLater(() -> this.matrix[boardSize / 2][boardSize / 2].setBackground(Color.GRAY));
         }
     }
 

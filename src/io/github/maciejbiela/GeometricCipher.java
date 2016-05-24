@@ -1,4 +1,4 @@
-package project;
+package io.github.maciejbiela;
 
 import javax.swing.*;
 import java.awt.*;
