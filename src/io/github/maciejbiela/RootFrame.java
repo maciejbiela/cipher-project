@@ -23,9 +23,7 @@ class RootFrame extends JFrame {
             remove(grid);
         }
         grid = panel;
-        if (!(menuState == MenuState.CIPHER_FILLER)) {
-            setMenuPanel(menuState);
-        }
+        setMenuPanel(menuState);
         add(panel, BorderLayout.CENTER);
         revalidate();
     }

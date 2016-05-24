@@ -155,7 +155,11 @@ class Chooser extends Grid {
             }
         }
         if (isSizeOdd()) {
-            SwingUtilities.invokeLater(() -> this.matrix[boardSize / 2][boardSize / 2].setBackground(Color.GRAY));
+            SwingUtilities.invokeLater(() -> {
+                final int mid = boardSize / 2;
+                this.matrix[mid][mid].setBackground(Color.GRAY);
+                this.matrix[mid][mid].setForeground(Color.GRAY);
+            });
         }
     }
 

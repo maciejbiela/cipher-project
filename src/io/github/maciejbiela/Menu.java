@@ -27,7 +27,7 @@ class Menu extends JPanel {
         this.size = size;
         setUpElements(menuState);
         addElements();
-        initializeButtonsState();
+        initializeButtonsState(menuState);
     }
 
     private void setUpElements(MenuState menuState) {
@@ -38,10 +38,14 @@ class Menu extends JPanel {
         setUpSaveButton();
     }
 
-    private void initializeButtonsState() {
+    private void initializeButtonsState(MenuState menuState) {
         buttonStateMap.put(openButton, ButtonState.ENABLED);
         buttonStateMap.put(doneButton, ButtonState.ENABLED);
-        buttonStateMap.put(rotateRightButton, ButtonState.INVISIBLE);
+        if (menuState == MenuState.CIPHER_FILLER) {
+            buttonStateMap.put(rotateRightButton, ButtonState.ENABLED);
+        } else {
+            buttonStateMap.put(rotateRightButton, ButtonState.INVISIBLE);
+        }
         buttonStateMap.put(saveButton, ButtonState.INVISIBLE);
         setButtonsState();
     }
